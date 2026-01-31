@@ -1,54 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Expense Tracker</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeoTrack Expense</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="app">
+    <header>
+      <div class="title-block">
+        <h1>NeoTrack Expense</h1>
+        <p>Stay on top of what you spend, in a single clean view.</p>
+      </div>
+      <div class="pill">
+        <span class="pill-dot"></span>
+       
+      </div>
+    </header>
 
-<div class="container">
-    <h2>Expense Tracker</h2>
 
-    <div class="summary">
-        <div>
-            <p>Balance</p>
-            <h3 id="balance">₹0</h3>
+    <!-- LEFT: Summary + list -->
+    <section class="left">
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-label">Balance</div>
+          <div class="summary-value" id="summary-balance">₹0</div>
+          <div class="summary-sub">Available after all expenses</div>
+          <div class="summary-trend" id="summary-balance-trend">
+            <span>0%</span> vs last 10 entries
+          </div>
         </div>
-        <div>
-            <p>Total Budget</p>
-            <h3 id="budget">₹0</h3>
+        <div class="summary-card">
+          <div class="summary-label">Total Income</div>
+          <div class="summary-value" id="summary-income">₹0</div>
+          <div class="summary-sub" id="summary-income-count">0 entries</div>
         </div>
-        <div>
-            <p>Expense</p>
-            <h3 id="expense">₹0</h3>
+        <div class="summary-card">
+          <div class="summary-label">Total Spent</div>
+          <div class="summary-value" id="summary-expense">₹0</div>
+          <div class="summary-sub" id="summary-expense-count">0 entries</div>
+          <div class="summary-trend down" id="summary-expense-trend">
+            <span>0%</span> of income
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div class="input-section">
-        <input type="number" id="totalAmount" placeholder="Enter Total Budget">
-        <button onclick="setBudget()">Set Budget</button>
 
-        <input type="text" id="desc" placeholder="Expense Description">
-        <input type="number" id="amount" placeholder="Expense Amount">
+      <div class="list-panel">
+        <div class="panel-header">
+          <h2>Recent activity</h2>
+          <div class="filters">
+            <button class="chip active" data-filter="all">All</button>
+            <button class="chip" data-filter="expense">Expenses</button>
+            <button class="chip" data-filter="income">Income</button>
+          </div>
+        </div>
 
-        <select id="category">
-            <option>Food</option>
-            <option>Travel</option>
-            <option>Shopping</option>
-            <option>Bills</option>
-            <option>Other</option>
-        </select>
 
-        <button onclick="addExpense()">Add Expense</button>
-    </div>
+        <div class="table-head">
+          <div>Item</div>
+          <div>Category</div>
+          <div>Amount</div>
+          <div></div>
+        </div>
+        <div class="table-body" id="expense-list"></div>
+        <div class="empty-state" id="empty-state">
+         
+        </div>
+      </div>
+    </section>
 
-    <ul id="expense-list"></ul>
 
-    <canvas id="chart"></canvas>
-</div>
+    <!-- RIGHT: Form + breakdown -->
+    <section class="right">
+      <div class="card">
+        <div class="card-header">
+          <h2>Add transaction</h2>
+          <div class="toggle-group" id="type-toggle">
+            <button class="toggle active" data-type="expense">Expense</button>
+            <button class="toggle" data-type="income">Income</button>
+          </div>
+        </div>
+        <form id="expense-form">
+          <div class="field">
+            <label class="field-label">Title</label>
+            <input type="text" id="title" placeholder="e.g. Groceries, Salary, Coffee" required>
+          </div>
 
-<script src="script.js"></script>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label">Amount (₹)</label>
+              <input type="number" id="amount" placeholder="0" min="0.01" step="0.01" required>
+            </div>
+            <div class="field">
+              <label class="field-label">Category</label>
+              <select id="category" required>
+                <option value="General">General</option>
+                <option value="Food & Dining">Food & Dining</option>
+                <option value="Transport">Transport</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Subscriptions">Subscriptions</option>
+                <option value="Bills & Utilities">Bills & Utilities</option>
+                <option value="Health & Fitness">Health & Fitness</option>
+                <option value="Travel">Travel</option>
+                <option value="Salary">Salary</option>
+                <option value="Freelance">Freelance</option>
+                <option value="Other income">Other income</option>
+              </select>
+            </div>
+          </div>
+
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label">Date</label>
+              <input type="date" id="date">
+            </div>
+            <div class="field">
+              <label class="field-label">Notes (optional)</label>
+              <input type="text" id="notes" placeholder="Short note you'll remember">
+            </div>
+          </div>
+
+
+          <button type="submit" class="btn-primary">
+            <span>+ Save transaction</span>
+          </button>
+          <div class="status" id="status-msg"></div>
+        </form>
+      </div>
+
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Spending breakdown</h2>
+          <span class="hint">Top categories this month</span>
+        </div>
+        <div class="breakdown-list" id="breakdown-list"></div>
+      </div>
+    </section>
+  </div>
+
+
+  <script src="script.js"></script>
 </body>
 </html>
