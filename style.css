@@ -1,0 +1,114 @@
+:root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --primary: #818cf8;
+    --text: #e5e7eb;
+    --border: #2d3748;
+    --expense: #ef4444;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 420px;
+    background: var(--card);
+    padding: 18px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+h2 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.summary div {
+    flex: 1;
+    background: #111827;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+.summary p {
+    margin: 0;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.summary h3 {
+    margin: 4px 0 0;
+    color: var(--primary);
+}
+
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+input, select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #111827;
+    color: var(--text);
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+li {
+    background: #ffffff;
+    color: #1f2933;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.delete {
+    background: var(--expense);
+    border: none;
+    color: white;
+    padding: 4px 6px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+canvas {
+    margin-top: 15px;
+    height: 180px !important;
+}
