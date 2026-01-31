@@ -1,6 +1,5 @@
 const STORAGE_KEY = "neotrack-expenses-v1";
 
-
 const form = document.getElementById("expense-form");
 const titleInput = document.getElementById("title");
 const amountInput = document.getElementById("amount");
@@ -10,11 +9,9 @@ const notesInput = document.getElementById("notes");
 const statusMsg = document.getElementById("status-msg");
 const typeToggle = document.getElementById("type-toggle");
 
-
 const listEl = document.getElementById("expense-list");
 const emptyStateEl = document.getElementById("empty-state");
 const filterChips = document.querySelectorAll(".chip");
-
 
 const summaryBalance = document.getElementById("summary-balance");
 const summaryBalanceTrend = document.getElementById("summary-balance-trend");
@@ -24,19 +21,17 @@ const summaryExpense = document.getElementById("summary-expense");
 const summaryExpenseCount = document.getElementById("summary-expense-count");
 const summaryExpenseTrend = document.getElementById("summary-expense-trend");
 
-
 const breakdownList = document.getElementById("breakdown-list");
-
 
 let currentType = "expense";
 let currentFilter = "all";
 let expenses = loadExpenses();
 
-
+// Initialize
 dateInput.valueAsDate = new Date();
 renderAll();
 
-
+// Event listeners
 typeToggle.addEventListener("click", (e) => {
   if (!e.target.matches(".toggle")) return;
   document.querySelectorAll(".toggle").forEach((btn) => {
@@ -44,7 +39,6 @@ typeToggle.addEventListener("click", (e) => {
   });
   currentType = e.target.dataset.type;
 });
-
 
 filterChips.forEach((chip) => {
   chip.addEventListener("click", () => {
@@ -55,7 +49,6 @@ filterChips.forEach((chip) => {
   });
 });
 
-
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const title = titleInput.value.trim();
@@ -64,12 +57,10 @@ form.addEventListener("submit", (e) => {
   const date = dateInput.value || new Date().toISOString().slice(0, 10);
   const notes = notesInput.value.trim();
 
-
   if (!title || !amount || amount <= 0) {
     setStatus("Please enter a valid title and amount.", "error");
     return;
   }
-
 
   const newEntry = {
     id: Date.now(),
@@ -82,18 +73,16 @@ form.addEventListener("submit", (e) => {
     createdAt: new Date().toISOString(),
   };
 
-
   expenses.unshift(newEntry);
   saveExpenses();
   renderAll();
-
 
   form.reset();
   dateInput.valueAsDate = new Date();
   setStatus("Transaction saved.", "ok");
 });
 
-
+// Core functions
 function loadExpenses() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -106,11 +95,9 @@ function loadExpenses() {
   }
 }
 
-
 function saveExpenses() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
 }
-
 
 function formatCurrency(value) {
   return "₹" + Number(value).toLocaleString("en-IN", {
@@ -118,7 +105,6 @@ function formatCurrency(value) {
     maximumFractionDigits: 2,
   });
 }
-
 
 function setStatus(msg, type) {
   statusMsg.textContent = msg;
@@ -131,20 +117,17 @@ function setStatus(msg, type) {
   }
 }
 
-
 function renderAll() {
   renderSummary();
   renderList();
   renderBreakdown();
 }
 
-
 function renderList() {
   listEl.innerHTML = "";
-  const filtered = currentFilter === "all"
-    ? expenses
+  const filtered = currentFilter === "all" 
+    ? expenses 
     : expenses.filter((e) => e.type === currentFilter);
-
 
   if (!filtered.length) {
     emptyStateEl.style.display = "block";
@@ -152,13 +135,11 @@ function renderList() {
   }
   emptyStateEl.style.display = "none";
 
-
   filtered.slice(0, 10).forEach((entry) => {
     const row = document.createElement("div");
     row.className = "table-row";
 
-
-   
+    // Main content
     const main = document.createElement("div");
     main.className = "expense-main";
     const titleEl = document.createElement("div");
@@ -173,16 +154,14 @@ function renderList() {
     }) + (entry.notes ? " • " + entry.notes : "");
     main.append(titleEl, meta);
 
-
-   
+    // Category
     const cat = document.createElement("div");
     const catBadge = document.createElement("div");
     catBadge.className = "badge badge-category";
     catBadge.textContent = entry.category;
     cat.appendChild(catBadge);
 
-
-   
+    // Amount
     const amountDiv = document.createElement("div");
     const amtBadge = document.createElement("div");
     amtBadge.className = "badge badge-amount " + (entry.type === "expense" ? "expense" : "income");
@@ -190,7 +169,7 @@ function renderList() {
     amtBadge.textContent = sign + formatCurrency(entry.amount).slice(1);
     amountDiv.appendChild(amtBadge);
 
-
+    // Delete button
     const actions = document.createElement("div");
     const delBtn = document.createElement("button");
     delBtn.className = "btn-icon";
@@ -206,12 +185,10 @@ function renderList() {
     });
     actions.appendChild(delBtn);
 
-
     row.append(main, cat, amountDiv, actions);
     listEl.appendChild(row);
   });
 }
-
 
 function renderSummary() {
   const totalIncome = expenses
@@ -219,37 +196,31 @@ function renderSummary() {
     .reduce((sum, e) => sum + e.amount, 0);
   const incomeCount = expenses.filter((e) => e.type === "income").length;
 
-
   const totalExpense = expenses
     .filter((e) => e.type === "expense")
     .reduce((sum, e) => sum + e.amount, 0);
   const expenseCount = expenses.filter((e) => e.type === "expense").length;
 
-
   const balance = totalIncome - totalExpense;
-
 
   summaryIncome.textContent = formatCurrency(totalIncome);
   summaryIncomeCount.textContent = `${incomeCount} ${incomeCount === 1 ? "entry" : "entries"}`;
 
-
   summaryExpense.textContent = formatCurrency(totalExpense);
   summaryExpenseCount.textContent = `${expenseCount} ${expenseCount === 1 ? "entry" : "entries"}`;
 
-
   summaryBalance.textContent = formatCurrency(balance);
-
 
   const expensePctOfIncome = totalIncome > 0 ? Math.round((totalExpense / totalIncome) * 100) : 0;
   summaryExpenseTrend.querySelector("span").textContent = expensePctOfIncome + "%";
 
-
+  // Balance trend (last 5 vs previous 5)
   const lastTen = expenses.slice(0, 10);
   if (lastTen.length >= 4) {
     const mid = Math.floor(lastTen.length / 2);
     const recent = lastTen.slice(0, mid);
     const prev = lastTen.slice(mid);
-   
+    
     const balRecent = sumType(recent, "income") - sumType(recent, "expense");
     const balPrev = sumType(prev, "income") - sumType(prev, "expense");
     const diff = balPrev ? ((balRecent - balPrev) / Math.abs(balPrev)) * 100 : 0;
@@ -259,24 +230,19 @@ function renderSummary() {
   }
 }
 
-
 function sumType(arr, type) {
   return arr.filter((e) => e.type === type).reduce((sum, e) => sum + e.amount, 0);
 }
 
-
 function renderBreakdown() {
   breakdownList.innerHTML = "";
-
 
   const now = new Date();
   const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
-
   const monthlyExpenses = expenses.filter(
     (e) => e.type === "expense" && (e.date || e.createdAt).startsWith(monthKey)
   );
-
 
   if (!monthlyExpenses.length) {
     const empty = document.createElement("div");
@@ -286,33 +252,28 @@ function renderBreakdown() {
     return;
   }
 
-
   const totalsByCategory = {};
   monthlyExpenses.forEach((e) => {
     totalsByCategory[e.category] = (totalsByCategory[e.category] || 0) + e.amount;
   });
 
-
   const total = Object.values(totalsByCategory).reduce((sum, v) => sum + v, 0);
   const sorted = Object.entries(totalsByCategory).sort((a, b) => b[1] - a[1]);
-
 
   sorted.slice(0, 4).forEach(([category, value], index) => {
     const row = document.createElement("div");
     row.className = "breakdown-item";
 
-
     const left = document.createElement("div");
     left.className = "breakdown-left";
-   
+    
     const dot = document.createElement("div");
     dot.className = `dot ${index === 0 ? "alert" : index === 1 ? "alt" : ""}`;
-   
+    
     const catName = document.createElement("span");
     catName.textContent = category;
-   
+    
     left.append(dot, catName);
-
 
     const right = document.createElement("div");
     const amount = document.createElement("span");
@@ -321,7 +282,6 @@ function renderBreakdown() {
     pct.className = "percentage";
     pct.textContent = `(${Math.round((value / total) * 100)}%)`;
     right.append(amount, pct);
-
 
     row.append(left, right);
     breakdownList.appendChild(row);
